@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+    <!-- Bootstrap CSS -->
+    <link href="estilos.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="encabezado">Zapatillas Urbanas</div>
+        <div class="cuadro">
+                        <h1>Iniciar sesión</h1>
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="cuenta">Cuenta:</label>
+                                <input type="text" class="form-control" id="cuenta" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contrasena">Contraseña:</label>
+                                <input type="password" class="form-control" id="contrasena" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+                            <a href="">Resgitrarse</a>
+                        </form>
+                    </div>      
+
+                
+    <div class="pie"></div>
+    <!-- jQuery, Popper.js, Bootstrap JS -->
+    
+    <script src="js/user.js"></script>
+    <script src="js/user controller.js"></script>
+    <script>
+        // Simulación del método accesoPermitido de la clase ControlUsuario
+        function accesAllowed(cuenta, contrasena) {
+            // Aquí debes implementar la lógica para verificar el acceso del usuario
+            // Por ejemplo, puedes realizar una petición AJAX al servidor para verificar la cuenta y la contraseña
+            let usuario = ctrlUser.accesoPermitido(cuenta,contrasena);
+            return (usuario!==null);
+            //return cuenta === "ramiro" && contrasena === "1234";
+        }
+
+        let userController = new UserController()
+      
+     //   console.log(ctrlUser.lista);
+       function accesoPermitido(cuenta,contrasena){
+            return userController.accesAllowed(cuenta,contrasena);
+       }
+        // Manejador de eventos para el envío del formulario
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Evitar que se envíe el formulario de manera convencional
+
+            // Obtener los valores de cuenta y contraseña
+            let cuenta = document.getElementById("cuenta").value;
+            let contrasena = document.getElementById("contrasena").value;
+
+            // Verificar el acceso del usuario
+            if (accesoPermitido(cuenta, contrasena)) {
+                alert("Acceso permitido"); // Mensaje de acceso permitido
+                // Aquí podrías redireccionar al usuario a otra página o realizar otras acciones
+            } else {
+                alert("Acceso denegado"); // Mensaje de acceso denegado
+            }
+        });
+    </script>
+
+</body>
+
+</html>
