@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/estilos2.css" rel="stylesheet">
+    <title>Zapatillas Urbanas</title>
+    <style>
+        body {
+            color: black; /* Cambia el color del texto a negro */
+        }
+
+        #categoriasContainer {
+            position: none; /* Cambia a 'relative' si deseas que se posicione en relación al contenedor padre */
+            left: 0; /* Alineado a la izquierda */
+            top: 0px; /* Ajusta según la altura del botón */
+            background-color: black; /* Fondo blanco */
+            padding: 10px; /* Espaciado interno */
+            z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+            display: flex; /* Inicialmente oculto */
+            width: auto; /* Ajusta el ancho según sea necesario */
+            justify-content: center;
+        }
+        #listaCategorias {
+            list-style-type: none; /* Sin viñetas */
+            padding: 0px; /* Sin padding */
+            list-style-type: none; /* Sin viñetas */
+            padding: 0; /* Sin padding */
+            display: flex; /* Mantener el diseño en fila */
+            flex-direction: row; /* Alinear en fila */
+            justify-content: center; /* Alinear verticalmente */
+            margin-right: 40px; /* Espacio a la derecha de cada elemento */
+        }
+        #listaCategorias li{
+            margin-right: 30px; /* Espacio a la derecha de cada elemento */
+            margin-top: -15px;
+        }
+        .titulo{
+            margin-top: -12px;
+            padding-right: -30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="encabezado" style="height: 40px; display: flex; flex-direction: row;">
+        <div class="titulo">Zapatillas Urbanas</div>
+        <button id="mostrarCategorias">Mostrar Categorías</button>
+        <div id="categoriasContainer"><ul id="listaCategorias" ></ul></div>
+        <div><a href="#">Marca</a></div>
+        <!-- <div><a href="#">Hombres</a></div>
+        <div><a href="#">Mujeres</a></div> -->
+        <input type="text">
+        <h3><a href="seccioncarrito.html">Carrito</a></h3>
+    </div>
+
+    <script>
+        document.getElementById("mostrarCategorias").addEventListener("click", function() {
+            const categoriasContainer = document.getElementById("categoriasContainer");
+            // Alternar la visibilidad del contenedor de categorías
+            if (categoriasContainer.style.display === "none") {
+                categoriasContainer.style.display = "block"; // Mostrar
+                fetch('/categorias') // Hacemos una solicitud GET al servidor
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la red');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const listaCategorias = document.getElementById("listaCategorias");
+                        listaCategorias.innerHTML = ''; // Limpiamos la lista antes de llenarla
+
+                        data.forEach(categoria => {
+                            const li = document.createElement("li");
+                            li.textContent = categoria.descripcion; // Solo mostrar la descripción
+                            listaCategorias.appendChild(li);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error al obtener las categorías:', error);
+                    });
+            } else {
+                categoriasContainer.style.display = "none"; // Ocultar
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+    <link href="css/estilos.css" rel="stylesheet">
+</head>
+<body>
+    <div class="encabezado">Zapatillas Urbanas</div>
+    <div class="cuadro">
+        <h1>Registro de Usuario</h1>
+        <form id="registroForm">
+            <label for="ci">CI:</label>
+            <input type="number" id="ci" required>
+            <br>
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" required>
+            <br>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" required>
+            <br>
+            <label for="email">Email:</label>
+            <input type="email" id="email">
+            <br>
+            <label for="rol">Rol:</label>
+            <input type="text" id="rol">
+            <br>
+            <button type="submit">Registrar</button>
+        </form>
+    </div>      
+
+    <div class="pie"></div>
+    
+    <script>
+        document.getElementById("registroForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Evitar el envío del formulario por defecto
+    
+            const ci = document.getElementById("ci").value;
+            const usuario = document.getElementById("usuario").value;
+            const password = document.getElementById("password").value;
+            const email = document.getElementById("email").value;
+            const rol = document.getElementById("rol").value;
+    
+            // Enviar datos al servidor para registrar el usuario
+            fetch('/registrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ci, usuario, password, email, rol })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Muestra el mensaje de respuesta
+                if (data.message === 'Usuario registrado con éxito') {
+                    // Redirigir al login.html
+                    window.location.href = 'login.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+
+</html>
