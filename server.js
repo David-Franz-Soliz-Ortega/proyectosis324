@@ -35,6 +35,7 @@ db.get('SELECT COUNT(*) as count FROM usuario', (err, row) => {
     }
 });
 
+app.get
 // // Crear la tabla de usuario si no existe
 // db.serialize(() => {
 //     db.run(`CREATE TABLE IF NOT EXISTS usuario (
@@ -133,7 +134,53 @@ app.get('/categorias', (req, res) => {
         res.status(200).json(rows); // Devuelve las categorías en formato JSON
     });
 });
+//ruta para obtener los productos
+//leer productos
+app.get('/producto',(req,res)=>{
+    db.all('SELECT * FROM producto',[],(err,rows)=>{
+        if(err){
+            return res.status(500).json({message:'Error en la base de datos'});
+        }
+        res.status(200).json(rows);
+    })
+});
 
+//insertar productos
+app.post('/productos', (req, res) => {
+    const { nombre, descripcion, precio, stock } = req.body;
+    db.run(`INSERT INTO producto (nombre, descripcion, precio, stock) VALUES (?, ?, ?, ?)`, 
+      [nombre, descripcion, precio, stock], function(err) {
+        if (err) {
+          res.status(500).send(err.message);
+        } else {
+          res.status(201).json({ id: this.lastID });
+        }
+    });
+  });
+//eliminar productos
+app.delete('/productos/:id', (req, res) => {
+    const { id } = req.params;
+    db.run(`DELETE FROM producto WHERE id = ?`, [id], function(err) {
+      if (err) {
+        res.status(500).send(err.message);
+      } else {
+        res.sendStatus(200);
+      }
+    });
+  });
+//editar productos
+app.put('/productos/:id', (req, res) => {
+    const { nombre, descripcion, precio, stock } = req.body;
+    const { id } = req.params;
+    db.run(`UPDATE producto SET nombre = ?, descripcion = ?, precio = ?, stock = ? WHERE id = ?`,
+      [nombre, descripcion, precio, stock, id], function(err) {
+        if (err) {
+          res.status(500).send(err.message);
+        } else {
+          res.sendStatus(200);
+        }
+    });
+  });
 // Endpoint para registrar un nuevo usuario
 app.post('/registrar', (req, res) => {
     const { ci, usuario, password, email, rol } = req.body;
@@ -150,6 +197,9 @@ app.post('/registrar', (req, res) => {
         res.status(201).json({ message: 'Usuario registrado con éxito' });
     });
 });
+
+
+
 
 // Iniciar el servidor en el puerto 3000
 app.listen(3000, () => {

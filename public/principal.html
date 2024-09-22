@@ -50,9 +50,25 @@
         <!-- <div><a href="#">Hombres</a></div>
         <div><a href="#">Mujeres</a></div> -->
         <input type="text">
+        <button>Buscar</button>
         <h3><a href="seccioncarrito.html">Carrito</a></h3>
     </div>
-
+    <div class="cuerpo"></div>
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Costo Total</th>
+                    <th>Imagen</th>
+                </tr>
+            </thead>
+            <tbody id="productos-tbody" oninput="cargarProductos()">
+                <!-- Aquí se insertarán los productos -->
+            </tbody>
+        </table>
+    </div>
     <script>
         document.getElementById("mostrarCategorias").addEventListener("click", function() {
             const categoriasContainer = document.getElementById("categoriasContainer");
@@ -83,6 +99,33 @@
                 categoriasContainer.style.display = "none"; // Ocultar
             }
         });
+
+        ///productos
+        function cargarProductos() {
+            fetch('/producto')
+              .then(response => response.json())
+              .then(data => {
+                const tabla = document.getElementById('productos-table').getElementsByTagName('tbody')[0];
+                tabla.innerHTML = '';
+                data.forEach(producto => {
+                  const fila = tabla.insertRow();
+                  fila.innerHTML = `
+                    <td>${producto.id}</td>
+                    <td>${producto.nombre}</td>
+                    <td>${producto.descripcion}</td>
+                    <td>${producto.precio}</td>
+                    <td>${producto.stock}</td>
+                    <td>
+                      <a href="editar.html?id=${producto.id}">Editar</a>
+                      <button onclick="eliminarProducto(${producto.id})">Eliminar</button>
+                    </td>
+                  `;
+                });
+              })
+              .catch(error => console.error('Error:', error));
+          }
     </script>
+    
+  
 </body>
 </html>

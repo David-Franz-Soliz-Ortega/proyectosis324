@@ -19,6 +19,12 @@
                 <label for="password">Password:</label> <br>
                 <input type="password" class="form-control" id="password" required> <br>
             </div> <br>
+            <div><label>Rol:</label><br>
+                <select name="rol" id="rol">
+                    <option value="1">Administrador</option>
+                    <option value="2">Usuario</option>
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button> <br>
             <a href="registrarse.html">Registrarse</a>
         </form>
@@ -47,7 +53,7 @@
     .then(data => {
         if (data.message === 'Acceso permitido') {
             alert('Acceso permitido');
-            window.location.href = "seccionagregar.html"; // Redirige al usuario
+            window.location.href = "principal.html"; // Redirige al usuario
         } else {
             alert(data.message); // Muestra el mensaje de error
         }

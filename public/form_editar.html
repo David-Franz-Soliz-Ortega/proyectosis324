@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/estilos3.css">
+</head>
+<body>
+    <div class="encabezado">
+        
+    </div>
+    <div class="formulario_edit">
+        <h1>Edite los datos del producto</h1>
+        <form>
+        <label for="Categoria">Escoja la cateoria a la que pertenece</label><br>
+        <select id="valorcategoria">
+        <option for="1">1.Categoría para hombres</option>
+        <option for="2">2.Categoría para mujeres</option>
+        <option for="3">3.Categoría Unisex</option>
+    </select><br>
+        <label for="Descripción">Describa al producto</label><br>
+        <input type="text" name="descripcion"     id="descripcion"><br>
+        <label for="precio">Precio por unidad</label><br>
+        <input type="number" name="precio" oninput="calculartotal()"    id="precio"><br>
+        <label for="stock">Stock</label><br>
+        <input type="number" name="stock"  oninput="calculartotal()"  id="stock"><br>
+        <label for="total">Costo total</label><br>
+        <input type="number" name="total" id="total" readonly><br>
+        <label>Imagen del producto</label><br>
+        <input type="file" name="imagen" id="imagen"><br>
+        <input type="submit" value="Registrar"><br>
+    </form>
+</div>
+    <script>
+        function calculartotal(){
+            var precio= parseFloat(document.getElementById("precio").value)||0;
+            var stock= parseFloat(document.getElementById("stock").value)||0;
+            var total=precio*stock;
+            document.getElementById("total").value = total.toFixed(2);
+    
+        }
+        if (categoria === "" || descripcion === "" || precio === "" || stock === "" || imagen === "") {
+            event.preventDefault(); // Evitar que el formulario se envíe
+            mensaje.textContent = "Por favor, complete todos los campos antes de registrar el producto.";
+        }
+       
+    </script>
+   
+</body>
+</html>

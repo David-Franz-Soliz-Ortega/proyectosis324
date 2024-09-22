@@ -15,3 +15,6 @@
 .encabezado .titulo{
     font-size: 25px;
 }
+.tabla{
+    border:2px solid black;
+}
