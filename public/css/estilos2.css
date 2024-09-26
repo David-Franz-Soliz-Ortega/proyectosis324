@@ -22,9 +22,16 @@
 
 .encabezado .titulo{
     font-size: 25px;
+    color: white; /* Color blanco */
+    font-weight: bold; /* Negritas */
+    text-decoration: none; /* Sin subrayado */
 }
-
-
+.titulo-enlace{
+    font-size: 25px;
+    color: white; /* Color blanco */
+    font-weight: bold; /* Negritas */
+    text-decoration: none; /* Sin subrayado */
+}
 .contenido {
     display: flex;
     flex-wrap: wrap;
@@ -71,8 +78,6 @@
     border-radius: 5px; /* Bordes redondeados */
     margin-top: 10px; /* Espacio superior */
 }
-
-
 
 footer {
     background-color: black;

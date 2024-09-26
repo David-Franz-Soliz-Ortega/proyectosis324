@@ -2,8 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs'); // Asegúrate de que esta línea esté presente
+const multer = require('multer');
 const path = require('path');
 const app = express();
+
 
 // Código para generar el hash
 const password = '123456'; // La contraseña que deseas probar
@@ -133,6 +135,43 @@ app.get('/categorias', (req, res) => {
         res.status(200).json(rows); // Devuelve las categorías en formato JSON
     });
 });
+// Configuración de multer para guardar archivos en la carpeta 'public/img'
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, 'public', 'img')); // Asegúrate de que esta ruta sea correcta
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname); // Nombre original del archivo
+    }
+});
+
+const upload = multer({ storage: storage });
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public')); // Asegúrate de servir archivos estáticos
+
+// Ruta para agregar productos
+// Ruta para agregar productos
+app.post('/agregar-producto', upload.single('imagen'), (req, res) => {
+    console.log('Archivo recibido:', req.file); // Verifica si el archivo se recibe
+    const nombre = req.body.nombre; // Obtener el nombre del producto
+    const precio = req.body.precio; // Obtener el precio del producto
+    const imagen = req.file ? `img/${req.file.filename}` : null; // Concatenar 'img/' al nombre del archivo
+
+    // Verificar que los campos no sean nulos
+    if (!nombre || !precio || !imagen) {
+        return res.status(400).send('Nombre, precio e imagen son obligatorios.');
+    }
+
+    db.run('INSERT INTO productos (nombre, precio, imagen) VALUES (?, ?, ?)', [nombre, precio, imagen], function(err) {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.status(200).send('Producto agregado con éxito');
+    });
+});
+
 
 // Ruta para obtener productos
 app.get('/productos', (req, res) => {

@@ -8,12 +8,121 @@
 </head>
 <body>
     <div class="encabezado">
-        <div class="titulo">Zapatillas Urbanas</div>
+        <div class="titulo"><a href="seccionagregar.html" class="titulo-enlace">Zapatillas Urbanas</a></div>
         <div><a href="http://">Marca  </a></div>
         <div><a href="http://">Hombres</a></div>
         <div><a href="http://">Mujeres</a></div>
         <input type="text">
         <h3><a href="seccioncarrito.html">Carrito</a></h3>
     </div>
+
+    <!-- public/seccionprodcutos.html -->
+<!-- ... código existente ... -->
+<div class="producto-form">
+    <input type="text" id="nombre" placeholder="Nombre del producto">
+    <input type="text" id="precio" placeholder="Precio del producto">
+    <input type="file" id="imagen" name="imagen" accept="image/*" onchange="previsualizarImagen()">
+    <img id="imagen-previsualizacion" src="" alt="Previsualización de la imagen" style="display:none; width: 100px; height: auto;">
+    <button onclick="agregarProducto()">Agregar Producto</button>
+</div>
+
+<script>
+    function previsualizarImagen() {
+    const input = document.getElementById('imagen');
+    const imagenPrevisualizacion = document.getElementById('imagen-previsualizacion');
+    const archivo = input.files[0];
+
+    if (archivo) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagenPrevisualizacion.src = e.target.result; // Establecer la fuente de la imagen
+            imagenPrevisualizacion.style.display = 'block'; // Mostrar la imagen
+        }
+        reader.readAsDataURL(archivo); // Leer el archivo como URL de datos
+    } else {
+        imagenPrevisualizacion.src = '';
+        imagenPrevisualizacion.style.display = 'none'; // Ocultar la imagen si no hay archivo
+    }
+}
+
+
+
+function agregarProducto() {
+    const nombre = document.getElementById('nombre').value;
+    const precio = document.getElementById('precio').value;
+    const imagen = document.getElementById('imagen').files[0];
+
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('precio', precio);
+    formData.append('imagen', imagen); // Agregar la imagen al FormData
+
+    fetch('/agregar-producto', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.text())
+    .then(data => alert(data))
+    .catch(error => console.error('Error:', error));
+}
+</script>
+<!-- ... código existente ... -->
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<footer style="background-color: black; color: white; padding: 20px; display: flex; flex-wrap: wrap; justify-content: space-between;">
+    <div>
+        <h4>ATENCIÓN AL CLIENTE</h4>
+        <p><a href="#">Centro de Ayuda</a></p>
+        <p><a href="#">¿Cómo Comprar?</a></p>
+        <p><a href="#">Código Promocional</a></p>
+    </div>
+    <div>
+        <h4>LEGAL</h4>
+        <p><a href="#">Términos y Condiciones</a></p>
+        <p><a href="#">Políticas de Envío</a></p>
+        <p><a href="#">Políticas de Cambio</a></p>
+        <p><a href="#">Políticas de Privacidad</a></p>
+    </div>
+    <div>
+        <h4>¿TIENES DUDAS?</h4>
+        <p><a href="#">Guía de Tallas</a></p>
+        <p><a href="#">Plazos de Envío</a></p>
+        <p><a href="#">Sobre la Gift Card</a></p>
+    </div>
+    <div>
+        <h4>CONTÁCTATE CON NOSOTROS</h4>
+        <p>Agreganos: +591 71328312</p>
+        <p>Escríbenos: <a href="molloabel34@gmail.com">ADL@impulse.bo</a></p>
+        <p><a href="#">Sobre Nosotros</a></p>
+        <p>Abel David Fabian</p>
+    </div>
+    <div>
+        <h4>RECIBE OFERTAS ESPECIALES</h4>
+        <input type="email" placeholder="Correo Electrónico">
+        <button>SUBSCRIBIRSE</button>
+    </div>
+    </footer>
 </body>
 </html>

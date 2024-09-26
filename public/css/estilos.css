@@ -31,6 +31,13 @@ body{
     text-align: center;
 }
 
+.encabezado .titulo{
+    font-size: 25px;
+    color: white; /* Color blanco */
+    font-weight: bold; /* Negritas */
+    text-decoration: none; /* Sin subrayado */
+}
+
 .pie{
     /* border:2px solid black; */
     background-color: rgb(5, 117, 93);
