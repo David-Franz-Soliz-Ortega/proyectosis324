@@ -15,5 +15,73 @@
         <input type="text">
         <h3><a href="seccioncarrito.html">Carrito</a></h3>
     </div>
+    <h1>Lista de productos</h1>
+    <div id="contenido-carrito"></div>
+    <h2 id="total-precio">Total: 0 Bs.</h2>
+
+    <script>
+        // Función para cargar productos del carrito
+        fetch('/carrito')
+            .then(response => response.json())
+            .then(data => {
+                const contenido = document.getElementById('contenido-carrito');
+                let total = 0; // Variable para acumular el total
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'tarjeta'; // Añadir clase para estilo
+                    div.innerHTML = `
+                        <img src="${item.imagen}" alt="${item.nombre}">
+                        <h4>${item.nombre}</h4>
+                        <p>Cantidad: <input type="number" id="cantidad-${item.id}" value="${item.cantidad}" min="1"></p>
+                        <p>Precio Unitario: ${item.precio} Bs.</p>
+                        <p>Precio Total: ${item.total} Bs.</p>
+                        <button onclick="actualizarCantidad(${item.id})">Actualizar</button>
+                        <button onclick="eliminarDelCarrito(${item.id})">Eliminar</button>
+                    `;
+                    contenido.appendChild(div);
+                    total += item.total; // Sumar el precio total
+                });
+                document.getElementById('total-precio').innerText = `Total: ${total} Bs.`; // Mostrar el total
+            })
+            .catch(error => console.error('Error al cargar el carrito:', error));
+
+        // Función para actualizar la cantidad
+        function actualizarCantidad(id) {
+            const cantidad = document.getElementById(`cantidad-${id}`).value;
+
+            fetch(`/actualizar-cantidad/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cantidad: cantidad })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Cantidad actualizada');
+                    location.reload(); // Recargar la página para actualizar el carrito
+                } else {
+                    alert('Error al actualizar la cantidad');
+                }
+            })
+            .catch(error => console.error('Error al actualizar la cantidad:', error));
+        }
+
+        // Función para eliminar del carrito
+        function eliminarDelCarrito(id) {
+            fetch(`/eliminar-del-carrito/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Producto eliminado del carrito');
+                    location.reload(); // Recargar la página para actualizar el carrito
+                } else {
+                    alert('Error al eliminar del carrito');
+                }
+            })
+            .catch(error => console.error('Error al eliminar del carrito:', error));
+        }
+    </script>
 </body>
 </html>

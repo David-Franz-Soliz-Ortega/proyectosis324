@@ -134,6 +134,70 @@ app.get('/categorias', (req, res) => {
     });
 });
 
+// Ruta para obtener productos
+app.get('/productos', (req, res) => {
+    db.all('SELECT * FROM productos', [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error en la base de datos' });
+        }
+        res.status(200).json(rows); // Devuelve los productos en formato JSON
+    });
+});
+
+// Ruta para agregar al carrito
+app.post('/agregar-al-carrito', (req, res) => {
+    const { producto_id, cantidad } = req.body;
+
+    db.run('INSERT INTO carrito (producto_id, cantidad) VALUES (?, ?)', [producto_id, cantidad], function(err) {
+        if (err) {
+            return res.status(500).json({ message: 'Error al agregar al carrito: ' + err.message });
+        }
+        res.status(201).json({ message: 'Producto agregado al carrito' });
+    });
+});
+
+// Ruta para obtener productos del carrito con detalles
+app.get('/carrito', (req, res) => {
+    db.all(`
+        SELECT c.id, c.cantidad, p.nombre, p.imagen, p.precio, (c.cantidad * p.precio) AS total
+        FROM carrito c 
+        JOIN productos p ON c.producto_id = p.id
+    `, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error en la base de datos' });
+        }
+        res.status(200).json(rows); // Devuelve los productos en el carrito con detalles
+    });
+});
+
+// Ruta para eliminar del carrito
+app.delete('/eliminar-del-carrito/:id', (req, res) => {
+    const id = req.params.id;
+
+    db.run('DELETE FROM carrito WHERE id = ?', id, function(err) {
+        if (err) {
+            return res.status(500).json({ message: 'Error al eliminar del carrito: ' + err.message });
+        }
+        res.status(200).json({ message: 'Producto eliminado del carrito' });
+    });
+});
+
+// Ruta para actualizar la cantidad en el carrito
+app.put('/actualizar-cantidad/:id', (req, res) => {
+    const id = req.params.id;
+    const { cantidad } = req.body;
+
+    db.run('UPDATE carrito SET cantidad = ? WHERE id = ?', [cantidad, id], function(err) {
+        if (err) {
+            return res.status(500).json({ message: 'Error al actualizar la cantidad: ' + err.message });
+        }
+        res.status(200).json({ message: 'Cantidad actualizada' });
+    });
+});
+
+
+
+
 // Endpoint para registrar un nuevo usuario
 app.post('/registrar', (req, res) => {
     const { ci, usuario, password, email, rol } = req.body;
