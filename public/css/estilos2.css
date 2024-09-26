@@ -1,0 +1,85 @@
+
+.body {
+    color: black; /* Cambia el color del texto a negro */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Asegura que el body ocupe al menos la altura de la ventana */
+    margin: 0;
+}
+.encabezado{
+    border:2px solid black;
+    background-color: rgb(0, 0, 0);
+    color:white;
+    display:flex;
+    justify-content: space-around;
+    padding-bottom: 2px;
+}
+
+.encabezado div{
+    margin-left: 20px;
+    padding-top: 20px;
+}
+
+.encabezado .titulo{
+    font-size: 25px;
+}
+
+
+.contenido {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* Espacio entre las tarjetas */
+    padding: 20px; /* Espaciado interno */
+}
+
+.tarjeta {
+    border: 1px solid #ccc; /* Borde de la tarjeta */
+    border-radius: 8px; /* Bordes redondeados */
+    width: 200px; /* Ancho de la tarjeta */
+    margin: 10px; /* Margen entre tarjetas */
+    text-align: center; /* Centrar texto */
+    padding: 10px; /* Espaciado interno */
+    background-color: white; /* Fondo blanco */
+}
+
+.tarjeta img {
+    max-width: 100%; /* Imagen responsiva */
+    height: auto; /* Mantener proporciones */
+}
+
+.oferta {
+    background-color: #00bcd4; /* Color de fondo de la etiqueta de oferta */
+    color: white; /* Color del texto */
+    border-radius: 50%; /* Hacerlo circular */
+    padding: 5px 10px; /* Espaciado interno */
+    position: absolute; /* Posicionamiento absoluto */
+    top: 10px; /* Ajustar según sea necesario */
+    left: 10px; /* Ajustar según sea necesario */
+}
+
+.precio {
+    color: #f44336; /* Color del precio */
+    font-weight: bold; /* Negrita */
+}
+
+.comprar {
+    background-color: black; /* Fondo del botón */
+    color: white; /* Color del texto del botón */
+    border: none; /* Sin borde */
+    padding: 10px; /* Espaciado interno */
+    cursor: pointer; /* Cambiar cursor al pasar */
+    border-radius: 5px; /* Bordes redondeados */
+    margin-top: 10px; /* Espacio superior */
+}
+
+
+
+footer {
+    background-color: black;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: auto; /* Empuja el footer hacia abajo */
+}
