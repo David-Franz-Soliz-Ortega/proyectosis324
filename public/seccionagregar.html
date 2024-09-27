@@ -16,48 +16,170 @@
     <style>
         
         #categoriasContainer {
-            position: none; /* Cambia a 'relative' si deseas que se posicione en relación al contenedor padre */
-            left: 0; /* Alineado a la izquierda */
-            top: 0px; /* Ajusta según la altura del botón */
-            background-color: black; /* Fondo blanco */
-            padding: 10px; /* Espaciado interno */
-            z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
-            display: flex; /* Inicialmente oculto */
-            width: auto; /* Ajusta el ancho según sea necesario */
+            position: relative; 
+            left: 0; 
+            top: 0px; 
+            background-color: black; 
+            padding: 10px; 
+            z-index: 1000; 
+            display: flex; 
+            width: auto; 
             justify-content: center;
         }
+
         #listaCategorias {
-            list-style-type: none; /* Sin viñetas */
-            padding: 0px; /* Sin padding */
-            list-style-type: none; /* Sin viñetas */
-            padding: 0; /* Sin padding */
-            display: flex; /* Mantener el diseño en fila */
-            flex-direction: row; /* Alinear en fila */
-            justify-content: center; /* Alinear verticalmente */
-            margin-right: 40px; /* Espacio a la derecha de cada elemento */
+            list-style-type: none; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: row; 
+            justify-content: center; 
+            margin: 0; 
         }
-        #listaCategorias li{
-            margin-right: 30px; /* Espacio a la derecha de cada elemento */
-            margin-top: -15px;
+
+        #listaCategorias li {
+            margin-right: 30px; 
         }
-        .titulo{
-            margin-top: -12px;
-            padding-right: -30px;
+
+        .categoria {
+            color: white; /* Color del enlace */
+            cursor: pointer; /* Cambia el cursor al pasar el mouse */
+            padding: 5px; /* Espaciado interno */
+            text-decoration: none; /* Sin subrayado */
         }
+
+        .categoria:hover {
+            text-decoration: underline; /* Subrayar al pasar el mouse */
+        }
+
+        .contenido {
+            margin-top: 20px; /* Espacio entre categorías y productos */
+        }
+.titulo{
+    margin-top: -12px;
+    adding-right: -30px;
+}
     </style>
 </head>
 <body>
     <div class="encabezado" style="height: 50px; display: flex; flex-direction: row;">
         <div class="titulo"><a href="seccionagregar.html" class="titulo-enlace">Zapatillas Urbanas</a></div>
         <button id="mostrarCategorias">Mostrar Categorías</button>
-        <div id="categoriasContainer"><ul id="listaCategorias" ></ul></div>
-        <div><a href="#">Marca</a></div>
-        <div><a href="seccionprodcutos.html">AgregarProducto</div>
+        <div id="categoriasContainer" style="display: none;">
+        <ul id="listaCategorias">
+        <li><span class="categoria" onclick="filtrarProductos('hombre')">Zapatillas de Hombre</span></li>
+        <li><span class="categoria" onclick="filtrarProductos('mujer')">Zapatillas de Mujer</span></li>
+        <li><span class="categoria" onclick="filtrarProductos('unisex')">Zapatillas Unisex</span></li>
+    </ul>
+</div>
+
+
+        <!-- <div><a href="#">Marca</a></div> -->
+        <div><a href="seccionprodcutos.html">Agregar Producto</a></div> 
         <!-- <div><a href="#">Hombres</a></div>
         <div><a href="#">Mujeres</a></div> -->
-        <input type="text">
+        <div class="buscador">
+            <input type="text" id="busqueda" placeholder="Buscar producto por nombre o precio">
+            <button onclick="buscarProducto()">
+                <img src="/img/lupa.png" alt="Buscar" style="width: 20px; height: 20px;">
+            </button>
+        </div>
+        <!-- <br>
+        <div class="contenido" id="contenido-productos">
+        Los productos se cargarán aquí -->
+        <!-- </div> -->
         <h3><a href="seccioncarrito.html">Carrito</a></h3>
     </div>
+
+
+    <script>
+        // Evento para mostrar/ocultar categorías
+        // document.getElementById("mostrarCategorias").addEventListener("click", function() {
+        //     const categoriasContainer = document.getElementById("categoriasContainer");
+        //     categoriasContainer.style.display = categoriasContainer.style.display === "none" || categoriasContainer.style.display === "" ? "flex" : "none";
+        // });
+    
+        function filtrarProductos(palabraClave) {
+        console.log(`Filtrando productos por: ${palabraClave}`); // Para depuración
+        // Simulación de la búsqueda de productos
+        const productos = [
+            { nombre: "Zapatillas de Hombre 1", imagen: "img1.jpg", precio: 100, id: 1 },
+            { nombre: "Zapatillas de Mujer 1", imagen: "img2.jpg", precio: 120, id: 2 },
+            { nombre: "Zapatillas Unisex 1", imagen: "img3.jpg", precio: 110, id: 3 },
+        ];
+
+        const contenido = document.getElementById('contenido-productos');
+        contenido.innerHTML = ''; // Limpiar contenido previo
+
+        // Filtrar productos según la palabra clave
+        const productosFiltrados = productos.filter(producto => producto.nombre.toLowerCase().includes(palabraClave.toLowerCase()));
+        
+        productosFiltrados.forEach(producto => {
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta';
+            tarjeta.innerHTML = `
+                <span class="oferta">Oferta</span>
+                <img src="${producto.imagen}" alt="${producto.nombre}">
+                <h4>${producto.nombre}</h4>
+                <p class="precio">Precio Online: ${producto.precio} Bs.</p>
+                <button class="comprar" data-id="${producto.id}">COMPRAR</button>
+            `;
+            contenido.appendChild(tarjeta);
+        });
+
+        if (productosFiltrados.length === 0) {
+            contenido.innerHTML = '<p>No se encontraron productos.</p>';
+        }
+    }
+    </script>
+    
+
+
+
+
+    <script>
+        function buscarProducto() {
+    const query = document.getElementById('busqueda').value.trim();
+
+    fetch(`/buscar-producto?query=${encodeURIComponent(query)}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la red');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const contenido = document.getElementById('contenido-productos');
+        contenido.innerHTML = ''; // Limpiar contenido previo
+        data.forEach(producto => {
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta';
+            tarjeta.innerHTML = `
+                <span class="oferta">Oferta</span>
+                <img src="${producto.imagen}" alt="${producto.nombre}">
+                <h4>${producto.nombre}</h4>
+                <p class="precio">Precio Online: ${producto.precio} Bs.</p>
+                <button class="comprar" data-id="${producto.id}">COMPRAR</button>
+            `;
+            contenido.appendChild(tarjeta);
+        });
+
+        // Agregar evento a los botones "COMPRAR"
+        const botonesComprar = document.querySelectorAll('.comprar');
+        botonesComprar.forEach(boton => {
+            boton.addEventListener('click', () => {
+                const productoId = boton.getAttribute('data-id');
+                agregarAlCarrito(productoId); // Asegúrate de que se llame a la función aquí
+            });
+        });
+    })
+    .catch(error => console.error('Error al buscar productos:', error));
+}
+    </script>
+
+
+
+
+
     <br>
     <script>
         document.getElementById("mostrarCategorias").addEventListener("click", function() {

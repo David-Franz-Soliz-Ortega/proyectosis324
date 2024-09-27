@@ -128,13 +128,29 @@ app.post('/login', (req, res) => {
 
 // Ruta para obtener las categorías
 app.get('/categorias', (req, res) => {
-    db.all('SELECT * FROM categoria', [], (err, rows) => {
+    db.all('SELECT * FROM categorias', (err, rows) => {
         if (err) {
-            return res.status(500).json({ message: 'Error en la base de datos' });
+            return res.status(500).send(err.message);
         }
-        res.status(200).json(rows); // Devuelve las categorías en formato JSON
+        res.json(rows);
     });
 });
+
+// Ruta para filtrar productos por categoría
+app.get('/filtrar-productos', (req, res) => {
+    const categoria = req.query.categoria;
+    const sql = `SELECT * FROM productos WHERE nombre LIKE ?`;
+    const params = [`%${categoria}%`];
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
+
 // Configuración de multer para guardar archivos en la carpeta 'public/img'
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -150,6 +166,21 @@ const upload = multer({ storage: storage });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public')); // Asegúrate de servir archivos estáticos
+
+// Ruta para buscar productos
+app.get('/buscar-producto', (req, res) => {
+    const query = req.query.query;
+    const sql = `SELECT * FROM productos WHERE nombre LIKE ? OR precio LIKE ?`;
+    const params = [`%${query}%`, `%${query}%`];
+
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(rows);
+    });
+});
+
 
 // Ruta para agregar productos
 // Ruta para agregar productos

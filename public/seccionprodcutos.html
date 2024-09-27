@@ -12,9 +12,56 @@
         <div><a href="http://">Marca  </a></div>
         <div><a href="http://">Hombres</a></div>
         <div><a href="http://">Mujeres</a></div>
-        <input type="text">
+        <div class="buscador">
+            <input type="text" id="busqueda" placeholder="Buscar producto por nombre o precio">
+            <button onclick="buscarProducto()">
+                <img src="/img/lupa.png" alt="Buscar" style="width: 20px; height: 20px;">
+            </button>
+        </div>
+        <!-- <br>
+        <div class="contenido" id="contenido-productos">
+        Los productos se cargarán aquí -->
+        <!-- </div> -->
         <h3><a href="seccioncarrito.html">Carrito</a></h3>
     </div>
+
+
+    <script>
+        function buscarProducto() {
+            const query = document.getElementById('busqueda').value.trim();
+    
+            fetch(`/buscar-producto?query=${encodeURIComponent(query)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la red');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const contenido = document.getElementById('contenido-productos');
+                contenido.innerHTML = ''; // Limpiar contenido previo
+                data.forEach(producto => {
+                    const tarjeta = document.createElement('div');
+                    tarjeta.className = 'tarjeta';
+                    tarjeta.innerHTML = `
+                        <span class="oferta">Oferta</span>
+                        <img src="${producto.imagen}" alt="${producto.nombre}">
+                        <h4>${producto.nombre}</h4>
+                        <p class="precio">Precio Online: ${producto.precio} Bs.</p>
+                        <button class="comprar" data-id="${producto.id}">COMPRAR</button>
+                        <button class="editar" data-id="${producto.id}" onclick="editarProducto(${producto.id})">EDITAR</button>
+                        <button class="eliminar" data-id="${producto.id}" onclick="eliminarProducto(${producto.id})">ELIMINAR</button>
+                    `;
+                    contenido.appendChild(tarjeta);
+                });
+            })
+            .catch(error => console.error('Error al buscar productos:', error));
+        }
+    </script>
+
+
+
+
 
     <!-- public/seccionprodcutos.html -->
     <br>
