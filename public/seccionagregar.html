@@ -92,28 +92,19 @@
 
 
     <script>
-        // Evento para mostrar/ocultar categorías
-        // document.getElementById("mostrarCategorias").addEventListener("click", function() {
-        //     const categoriasContainer = document.getElementById("categoriasContainer");
-        //     categoriasContainer.style.display = categoriasContainer.style.display === "none" || categoriasContainer.style.display === "" ? "flex" : "none";
-        // });
-    
-        function filtrarProductos(palabraClave) {
-        console.log(`Filtrando productos por: ${palabraClave}`); // Para depuración
-        // Simulación de la búsqueda de productos
-        const productos = [
-            { nombre: "Zapatillas de Hombre 1", imagen: "img1.jpg", precio: 100, id: 1 },
-            { nombre: "Zapatillas de Mujer 1", imagen: "img2.jpg", precio: 120, id: 2 },
-            { nombre: "Zapatillas Unisex 1", imagen: "img3.jpg", precio: 110, id: 3 },
-        ];
-
+function filtrarProductos(categoria) {
+    fetch(`/filtrar-productos?categoria=${encodeURIComponent(categoria)}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la red');
+        }
+        return response.json();
+    })
+    .then(data => {
         const contenido = document.getElementById('contenido-productos');
         contenido.innerHTML = ''; // Limpiar contenido previo
 
-        // Filtrar productos según la palabra clave
-        const productosFiltrados = productos.filter(producto => producto.nombre.toLowerCase().includes(palabraClave.toLowerCase()));
-        
-        productosFiltrados.forEach(producto => {
+        data.forEach(producto => {
             const tarjeta = document.createElement('div');
             tarjeta.className = 'tarjeta';
             tarjeta.innerHTML = `
@@ -126,11 +117,18 @@
             contenido.appendChild(tarjeta);
         });
 
-        if (productosFiltrados.length === 0) {
-            contenido.innerHTML = '<p>No se encontraron productos.</p>';
-        }
-    }
-    </script>
+        // Agregar evento a los botones "COMPRAR" después de crear las tarjetas
+        const botonesComprar = document.querySelectorAll('.comprar');
+        botonesComprar.forEach(boton => {
+            boton.addEventListener('click', () => {
+                const productoId = boton.getAttribute('data-id');
+                agregarAlCarrito(productoId); // Llamar a la función de compra o carrito
+            });
+        });
+    })
+    .catch(error => console.error('Error al filtrar productos:', error));
+}
+</script>
     
 
 
