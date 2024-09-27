@@ -237,6 +237,48 @@ app.put('/actualizar-cantidad/:id', (req, res) => {
 
 
 
+
+// rutas para seccion productos
+// Ruta para obtener un producto por ID
+app.get('/producto/:id', (req, res) => {
+    const id = req.params.id;
+    db.get('SELECT * FROM productos WHERE id = ?', [id], (err, row) => {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.json(row);
+    });
+});
+
+
+// Ruta para actualizar un producto
+app.put('/actualizar-producto/:id', upload.single('imagen'), (req, res) => {
+    const id = req.params.id;
+    const nombre = req.body.nombre;
+    const precio = req.body.precio;
+    const imagen = req.file ? `img/${req.file.filename}` : null; // Si se sube una nueva imagen
+
+    db.run('UPDATE productos SET nombre = ?, precio = ?, imagen = ? WHERE id = ?', [nombre, precio, imagen, id], function(err) {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.status(200).send('Producto actualizado con éxito');
+    });
+});
+
+// Ruta para eliminar un producto
+app.delete('/eliminar-producto/:id', (req, res) => {
+    const id = req.params.id;
+    db.run('DELETE FROM productos WHERE id = ?', [id], function(err) {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        res.status(200).send('Producto eliminado con éxito');
+    });
+});
+
+
+
 // Endpoint para registrar un nuevo usuario
 app.post('/registrar', (req, res) => {
     const { ci, usuario, password, email, rol } = req.body;

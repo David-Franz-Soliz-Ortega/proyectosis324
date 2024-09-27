@@ -17,55 +17,204 @@
     </div>
 
     <!-- public/seccionprodcutos.html -->
+    <br>
+    <div class="contenido" id="contenido-productos">
+        <!-- Los productos se cargarán aquí -->
+    </div>
+    
+    <script>
+        // Función para cargar productos desde la base de datos
+        fetch('/productos')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la red');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const contenido = document.getElementById('contenido-productos');
+            contenido.innerHTML = ''; // Limpiar contenido previo
+            data.forEach(producto => {
+                const tarjeta = document.createElement('div');
+                tarjeta.className = 'tarjeta';
+                tarjeta.innerHTML = `
+                    <span class="oferta">Oferta</span>
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <h4>${producto.nombre}</h4>
+                    <p class="precio">Precio Online: ${producto.precio} Bs.</p>
+                    
+                    <button class="editar" data-id="${producto.id}">EDITAR</button>
+                    <button class="eliminar" data-id="${producto.id}">ELIMINAR</button>
+                `;
+                contenido.appendChild(tarjeta);
+            });
+    
+            // Agregar evento a los botones "COMPRAR"
+            // const botonesComprar = document.querySelectorAll('.comprar');
+            // botonesComprar.forEach(boton => {
+            //     boton.addEventListener('click', () => {
+            //         const productoId = boton.getAttribute('data-id');
+            //         agregarAlCarrito(productoId);
+            //     });
+            // });
+    
+            // Agregar evento a los botones "EDITAR"
+            const botonesEditar = document.querySelectorAll('.editar');
+            botonesEditar.forEach(boton => {
+                boton.addEventListener('click', () => {
+                    const productoId = boton.getAttribute('data-id');
+                    // Lógica para editar el producto
+                    editarProducto(productoId);
+                });
+            });
+    
+            // Agregar evento a los botones "ELIMINAR"
+            const botonesEliminar = document.querySelectorAll('.eliminar');
+            botonesEliminar.forEach(boton => {
+                boton.addEventListener('click', () => {
+                    const productoId = boton.getAttribute('data-id');
+                    // Lógica para eliminar el producto
+                    eliminarProducto(productoId);
+                });
+            });
+        })
+        .catch(error => console.error('Error al cargar productos:', error));
+    
+    // Función para agregar al carrito
+    
+    // Función para editar un producto
+    function editarProducto(productoId) {
+        // Aquí puedes implementar la lógica para editar el producto
+        alert(`Editar producto con ID: ${productoId}`);
+    }
+    
+    // Función para eliminar un producto
+    function eliminarProducto(productoId) {
+        // Aquí puedes implementar la lógica para eliminar el producto
+        if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+            fetch(`/eliminar-producto/${productoId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Producto eliminado con éxito');
+                    // Recargar la lista de productos
+                    location.reload();
+                } else {
+                    alert('Error al eliminar el producto');
+                }
+            })
+            .catch(error => console.error('Error al eliminar el producto:', error));
+        }
+    }
+    </script>
+    
+
+
+
+
+
 <!-- ... código existente ... -->
 <div class="producto-form">
     <input type="text" id="nombre" placeholder="Nombre del producto">
     <input type="text" id="precio" placeholder="Precio del producto">
     <input type="file" id="imagen" name="imagen" accept="image/*" onchange="previsualizarImagen()">
     <img id="imagen-previsualizacion" src="" alt="Previsualización de la imagen" style="display:none; width: 100px; height: auto;">
-    <button onclick="agregarProducto()">Agregar Producto</button>
+    <button id="agregar-btn" onclick="agregarProducto()">Agregar Producto</button>
+    <button id="editar-btn" style="display:none;" onclick="actualizarProducto()">Actualizar Producto</button>
 </div>
-
 <script>
+    let productoId = null; // Variable para almacenar el ID del producto a editar
+
     function previsualizarImagen() {
-    const input = document.getElementById('imagen');
-    const imagenPrevisualizacion = document.getElementById('imagen-previsualizacion');
-    const archivo = input.files[0];
+        const input = document.getElementById('imagen');
+        const imagenPrevisualizacion = document.getElementById('imagen-previsualizacion');
+        const archivo = input.files[0];
 
-    if (archivo) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagenPrevisualizacion.src = e.target.result; // Establecer la fuente de la imagen
-            imagenPrevisualizacion.style.display = 'block'; // Mostrar la imagen
+        if (archivo) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagenPrevisualizacion.src = e.target.result; // Establecer la fuente de la imagen
+                imagenPrevisualizacion.style.display = 'block'; // Mostrar la imagen
+            }
+            reader.readAsDataURL(archivo); // Leer el archivo como URL de datos
+        } else {
+            imagenPrevisualizacion.src = '';
+            imagenPrevisualizacion.style.display = 'none'; // Ocultar la imagen si no hay archivo
         }
-        reader.readAsDataURL(archivo); // Leer el archivo como URL de datos
-    } else {
-        imagenPrevisualizacion.src = '';
-        imagenPrevisualizacion.style.display = 'none'; // Ocultar la imagen si no hay archivo
     }
-}
 
+    function agregarProducto() {
+        const nombre = document.getElementById('nombre').value;
+        const precio = document.getElementById('precio').value;
+        const imagen = document.getElementById('imagen').files[0];
 
+        const formData = new FormData();
+        formData.append('nombre', nombre);
+        formData.append('precio', precio);
+        formData.append('imagen', imagen); // Agregar la imagen al FormData
 
-function agregarProducto() {
-    const nombre = document.getElementById('nombre').value;
-    const precio = document.getElementById('precio').value;
-    const imagen = document.getElementById('imagen').files[0];
+        fetch('/agregar-producto', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.text())
+        .then(data => alert(data))
+        .catch(error => console.error('Error:', error));
+    }
 
-    const formData = new FormData();
-    formData.append('nombre', nombre);
-    formData.append('precio', precio);
-    formData.append('imagen', imagen); // Agregar la imagen al FormData
+    function editarProducto(id) {
+        // Obtener los datos del producto desde el servidor
+        fetch(`/producto/${id}`)
+        .then(response => response.json())
+        .then(producto => {
+            // Llenar los campos del formulario con los datos del producto
+            document.getElementById('nombre').value = producto.nombre;
+            document.getElementById('precio').value = producto.precio;
+            // Mostrar la imagen actual
+            document.getElementById('imagen-previsualizacion').src = producto.imagen;
+            document.getElementById('imagen-previsualizacion').style.display = 'block';
+            productoId = producto.id; // Guardar el ID del producto a editar
+            document.getElementById('agregar-btn').style.display = 'none'; // Ocultar el botón de agregar
+            document.getElementById('editar-btn').style.display = 'block'; // Mostrar el botón de editar
+        })
+        .catch(error => console.error('Error al cargar el producto:', error));
+    }
 
-    fetch('/agregar-producto', {
-        method: 'POST',
-        body: formData,
-    })
-    .then(response => response.text())
-    .then(data => alert(data))
-    .catch(error => console.error('Error:', error));
-}
+    function actualizarProducto() {
+        const nombre = document.getElementById('nombre').value;
+        const precio = document.getElementById('precio').value;
+        const imagen = document.getElementById('imagen').files[0];
+
+        const formData = new FormData();
+        formData.append('nombre', nombre);
+        formData.append('precio', precio);
+        if (imagen) {
+            formData.append('imagen', imagen); // Agregar la nueva imagen al FormData
+        }
+
+        fetch(`/actualizar-producto/${productoId}`, {
+            method: 'PUT',
+            body: formData,
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data);
+            // Resetear el formulario
+            document.getElementById('nombre').value = '';
+            document.getElementById('precio').value = '';
+            document.getElementById('imagen').value = '';
+            document.getElementById('imagen-previsualizacion').style.display = 'none';
+            document.getElementById('agregar-btn').style.display = 'block'; // Mostrar el botón de agregar
+            document.getElementById('editar-btn').style.display = 'none'; // Ocultar el botón de editar
+        })
+        .catch(error => console.error('Error al actualizar el producto:', error));
+    }
 </script>
+
+
+
+
 <!-- ... código existente ... -->
 
 <br>
