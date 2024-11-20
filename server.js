@@ -137,20 +137,16 @@ app.get('/categorias', (req, res) => {
     });
 });
 
-// Ruta para filtrar productos por categoría
+// Ruta para filtrar productos por nombre
 app.get('/filtrar-productos', (req, res) => {
     const categoria = req.query.categoria;
-    const sql = `SELECT * FROM productos WHERE nombre LIKE ?`;
-    const params = [`%${categoria}%`];
-
-    db.all(sql, params, (err, rows) => {
+    db.all('SELECT * FROM productos WHERE nombre LIKE ?', [`%${categoria}%`], (err, rows) => {
         if (err) {
-            return res.status(500).send(err.message);
+            return res.status(500).json({ message: 'Error en la base de datos' });
         }
-        res.json(rows);
+        res.status(200).json(rows); // Devuelve los productos que coinciden con la categoría en formato JSON
     });
 });
-
 
 // Configuración de multer para guardar archivos en la carpeta 'public/img'
 const storage = multer.diskStorage({
