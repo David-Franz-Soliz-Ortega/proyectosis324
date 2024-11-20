@@ -48,7 +48,8 @@
                         <img src="${producto.imagen}" alt="${producto.nombre}">
                         <h4>${producto.nombre}</h4>
                         <p class="precio">Precio Online: ${producto.precio} Bs.</p>
-                        
+                        <p class="tallas">Tallas: ${producto.tallas}</p>
+                        <p class="cantidad">Cantidad: ${producto.cantidad}</p>
                         <button class="editar" data-id="${producto.id}" onclick="editarProducto(${producto.id})">EDITAR</button>
                         <button class="eliminar" data-id="${producto.id}" onclick="eliminarProducto(${producto.id})">ELIMINAR</button>
                     `;
@@ -89,7 +90,8 @@
                     <img src="${producto.imagen}" alt="${producto.nombre}">
                     <h4>${producto.nombre}</h4>
                     <p class="precio">Precio Online: ${producto.precio} Bs.</p>
-                    
+                    <p class="tallas">Tallas: ${producto.tallas}</p>
+                    <p class="tallas">Cantidad: ${producto.cantidad}</p>
                     <button class="editar" data-id="${producto.id}">EDITAR</button>
                     <button class="eliminar" data-id="${producto.id}">ELIMINAR</button>
                 `;
@@ -165,7 +167,10 @@
 <div class="producto-form">
     <input type="text" id="nombre" placeholder="Nombre del producto">
     <input type="text" id="precio" placeholder="Precio del producto">
+    
     <input type="file" id="imagen" name="imagen" accept="image/*" onchange="previsualizarImagen()">
+    <input type="text" id="tallas" placeholder="Tallas disponibles">
+    <input type="text" id="cantidad" placeholder="Cantidad disponible">
     <img id="imagen-previsualizacion" src="" alt="Previsualización de la imagen" style="display:none; width: 100px; height: auto;">
     <button id="agregar-btn" onclick="agregarProducto()">Agregar Producto</button>
     <button id="editar-btn" style="display:none;" onclick="actualizarProducto()">Actualizar Producto</button>
@@ -195,11 +200,16 @@
         const nombre = document.getElementById('nombre').value;
         const precio = document.getElementById('precio').value;
         const imagen = document.getElementById('imagen').files[0];
+        const tallas = document.getElementById('tallas').value;
+        const cantidad = document.getElementById('cantidad').value; 
+        
 
         const formData = new FormData();
         formData.append('nombre', nombre);
         formData.append('precio', precio);
         formData.append('imagen', imagen); // Agregar la imagen al FormData
+        formData.append('tallas', tallas);
+        formData.append('cantidad', cantidad);
 
         fetch('/agregar-producto', {
             method: 'POST',
@@ -218,9 +228,12 @@
             // Llenar los campos del formulario con los datos del producto
             document.getElementById('nombre').value = producto.nombre;
             document.getElementById('precio').value = producto.precio;
+
             // Mostrar la imagen actual
             document.getElementById('imagen-previsualizacion').src = producto.imagen;
             document.getElementById('imagen-previsualizacion').style.display = 'block';
+            document.getElementById('tallas').value = producto.tallas;
+            document.getElementById('cantidad').value = producto.cantidad;
             productoId = producto.id; // Guardar el ID del producto a editar
             document.getElementById('agregar-btn').style.display = 'none'; // Ocultar el botón de agregar
             document.getElementById('editar-btn').style.display = 'block'; // Mostrar el botón de editar
@@ -232,10 +245,14 @@
         const nombre = document.getElementById('nombre').value;
         const precio = document.getElementById('precio').value;
         const imagen = document.getElementById('imagen').files[0];
+        const tallas = document.getElementById('tallas').value;
+        const cantidad = document.getElementById('cantidad').value;
 
         const formData = new FormData();
         formData.append('nombre', nombre);
         formData.append('precio', precio);
+        formData.append('tallas', tallas);
+        formData.append('cantidad', cantidad);
         if (imagen) {
             formData.append('imagen', imagen); // Agregar la nueva imagen al FormData
         }
@@ -251,6 +268,8 @@
             document.getElementById('nombre').value = '';
             document.getElementById('precio').value = '';
             document.getElementById('imagen').value = '';
+            document.getElementById('tallas').value = '';
+            document.getElementById('cantidad').value = '';
             document.getElementById('imagen-previsualizacion').style.display = 'none';
             document.getElementById('agregar-btn').style.display = 'block'; // Mostrar el botón de agregar
             document.getElementById('editar-btn').style.display = 'none'; // Ocultar el botón de editar

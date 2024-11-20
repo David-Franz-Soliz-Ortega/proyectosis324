@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/estilos2.css" rel="stylesheet">
     <title>Document</title>
+    <style>
+        .contenido-carrito {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+        }
+    </style>
 </head>
 <body>
     <div class="encabezado">
@@ -19,7 +26,7 @@
         <h3><a href="seccioncarrito.html">Carrito</a></h3>
     </div>
     <h1>Lista de productos</h1>
-    <div id="contenido-carrito"></div>
+    <div class="contenido-carrito" id="contenido-carrito"></div>
     <h2 id="total-precio">Total: 0 Bs.</h2>
 
     <script>
@@ -36,9 +43,10 @@
                         <img src="${item.imagen}" alt="${item.nombre}">
                         <h4>${item.nombre}</h4>
                         <p>Cantidad: <input type="number" id="cantidad-${item.id}" value="${item.cantidad}" min="1"></p>
+                        <p>Tallas: <input type="text" id="tallas-${item.id}" value="${item.tallas}"></p>
                         <p>Precio Unitario: ${item.precio} Bs.</p>
                         <p>Precio Total: ${item.total} Bs.</p>
-                        <button onclick="actualizarCantidad(${item.id})">Actualizar</button>
+                        <button onclick="actualizarCarrito(${item.id})">Actualizar</button>
                         <button onclick="eliminarDelCarrito(${item.id})">Eliminar</button>
                     `;
                     contenido.appendChild(div);
@@ -48,26 +56,27 @@
             })
             .catch(error => console.error('Error al cargar el carrito:', error));
 
-        // Función para actualizar la cantidad
-        function actualizarCantidad(id) {
+        // Función para actualizar la cantidad y las tallas
+        function actualizarCarrito(id) {
             const cantidad = document.getElementById(`cantidad-${id}`).value;
+            const tallas = document.getElementById(`tallas-${id}`).value;
 
-            fetch(`/actualizar-cantidad/${id}`, {
+            fetch(`/actualizar-carrito/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ cantidad: cantidad })
+                body: JSON.stringify({ cantidad: cantidad, tallas: tallas })
             })
             .then(response => {
                 if (response.ok) {
-                    alert('Cantidad actualizada');
+                    alert('Carrito actualizado');
                     location.reload(); // Recargar la página para actualizar el carrito
                 } else {
-                    alert('Error al actualizar la cantidad');
+                    alert('Error al actualizar el carrito');
                 }
             })
-            .catch(error => console.error('Error al actualizar la cantidad:', error));
+            .catch(error => console.error('Error al actualizar el carrito:', error));
         }
 
         // Función para eliminar del carrito

@@ -6,6 +6,7 @@ const multer = require('multer');
 const path = require('path');
 const app = express();
 
+app.use(bodyParser.json());
 
 // Código para generar el hash
 const password = '123456'; // La contraseña que deseas probar
@@ -170,32 +171,32 @@ app.use(express.static('public')); // Asegúrate de servir archivos estáticos
 // Ruta para buscar productos
 app.get('/buscar-producto', (req, res) => {
     const query = req.query.query;
-    const sql = `SELECT * FROM productos WHERE nombre LIKE ? OR precio LIKE ?`;
-    const params = [`%${query}%`, `%${query}%`];
-
-    db.all(sql, params, (err, rows) => {
+    db.all('SELECT * FROM productos WHERE nombre LIKE ?', [`%${query}%`], (err, rows) => {
         if (err) {
-            return res.status(500).send(err.message);
+            return res.status(500).json({ message: 'Error en la base de datos' });
         }
-        res.json(rows);
+        res.status(200).json(rows); // Devuelve los productos que coinciden con la búsqueda en formato JSON
     });
 });
 
 
 // Ruta para agregar productos
-// Ruta para agregar productos
+
 app.post('/agregar-producto', upload.single('imagen'), (req, res) => {
     console.log('Archivo recibido:', req.file); // Verifica si el archivo se recibe
     const nombre = req.body.nombre; // Obtener el nombre del producto
     const precio = req.body.precio; // Obtener el precio del producto
+    
     const imagen = req.file ? `img/${req.file.filename}` : null; // Concatenar 'img/' al nombre del archivo
+    const tallas = req.body.tallas; // Obtener las tallas del producto
+    const cantidad = req.body.cantidad; // Obtener la cantidad del producto
 
     // Verificar que los campos no sean nulos
-    if (!nombre || !precio || !imagen) {
-        return res.status(400).send('Nombre, precio e imagen son obligatorios.');
+    if (!nombre || !precio || !imagen || !tallas || !cantidad) {
+        return res.status(400).send('Nombre, precio, imagen, tallas y cantidad son obligatorios.');
     }
 
-    db.run('INSERT INTO productos (nombre, precio, imagen) VALUES (?, ?, ?)', [nombre, precio, imagen], function(err) {
+    db.run('INSERT INTO productos (nombre, precio, imagen, tallas, cantidad) VALUES (?, ?, ?, ?, ?)', [nombre, precio, imagen, tallas, cantidad], function(err) {
         if (err) {
             return res.status(500).send(err.message);
         }
@@ -214,22 +215,23 @@ app.get('/productos', (req, res) => {
     });
 });
 
-// Ruta para agregar al carrito
+// Ruta para agregar productos al carrito
 app.post('/agregar-al-carrito', (req, res) => {
-    const { producto_id, cantidad } = req.body;
+    const { producto_id, tallas, cantidad } = req.body;
 
-    db.run('INSERT INTO carrito (producto_id, cantidad) VALUES (?, ?)', [producto_id, cantidad], function(err) {
+    db.run('INSERT INTO carrito (producto_id, tallas, cantidad) VALUES (?, ?, ?)', [producto_id, tallas, cantidad], function(err) {
         if (err) {
             return res.status(500).json({ message: 'Error al agregar al carrito: ' + err.message });
         }
-        res.status(201).json({ message: 'Producto agregado al carrito' });
+        res.status(200).json({ message: 'Producto agregado al carrito' });
     });
 });
+
 
 // Ruta para obtener productos del carrito con detalles
 app.get('/carrito', (req, res) => {
     db.all(`
-        SELECT c.id, c.cantidad, p.nombre, p.imagen, p.precio, (c.cantidad * p.precio) AS total
+        SELECT c.id, c.cantidad, c.tallas, p.nombre, p.imagen, p.precio, (c.cantidad * p.precio) AS total
         FROM carrito c 
         JOIN productos p ON c.producto_id = p.id
     `, [], (err, rows) => {
@@ -252,16 +254,16 @@ app.delete('/eliminar-del-carrito/:id', (req, res) => {
     });
 });
 
-// Ruta para actualizar la cantidad en el carrito
-app.put('/actualizar-cantidad/:id', (req, res) => {
+// Ruta para actualizar la cantidad y las tallas en el carrito
+app.put('/actualizar-carrito/:id', (req, res) => {
     const id = req.params.id;
-    const { cantidad } = req.body;
+    const { cantidad, tallas } = req.body;
 
-    db.run('UPDATE carrito SET cantidad = ? WHERE id = ?', [cantidad, id], function(err) {
+    db.run('UPDATE carrito SET cantidad = ?, tallas = ? WHERE id = ?', [cantidad, tallas, id], function(err) {
         if (err) {
-            return res.status(500).json({ message: 'Error al actualizar la cantidad: ' + err.message });
+            return res.status(500).json({ message: 'Error al actualizar el carrito: ' + err.message });
         }
-        res.status(200).json({ message: 'Cantidad actualizada' });
+        res.status(200).json({ message: 'Carrito actualizado' });
     });
 });
 
@@ -287,9 +289,12 @@ app.put('/actualizar-producto/:id', upload.single('imagen'), (req, res) => {
     const id = req.params.id;
     const nombre = req.body.nombre;
     const precio = req.body.precio;
+    
     const imagen = req.file ? `img/${req.file.filename}` : null; // Si se sube una nueva imagen
+    const tallas = req.body.tallas;
+    const cantidad = req.body.cantidad;
 
-    db.run('UPDATE productos SET nombre = ?, precio = ?, imagen = ? WHERE id = ?', [nombre, precio, imagen, id], function(err) {
+    db.run('UPDATE productos SET nombre = ?, precio = ?, imagen = ?, tallas = ?, cantidad = ? WHERE id = ?', [nombre, precio, imagen, tallas, cantidad, id], function(err) {
         if (err) {
             return res.status(500).send(err.message);
         }
@@ -326,6 +331,42 @@ app.post('/registrar', (req, res) => {
         res.status(201).json({ message: 'Usuario registrado con éxito' });
     });
 });
+
+// ruta para disminuir cantidad de tenis
+// Ruta para agregar productos al carrito y actualizar la cantidad disponible en la tabla productos
+app.post('/agregar-al-carrito', (req, res) => {
+    const { producto_id, tallas, cantidad } = req.body;
+
+    // Iniciar una transacción
+    db.serialize(() => {
+        db.run('BEGIN TRANSACTION');
+
+        // Insertar el producto en el carrito
+        db.run('INSERT INTO carrito (producto_id, tallas, cantidad) VALUES (?, ?, ?)', [producto_id, tallas, cantidad], function(err) {
+            if (err) {
+                db.run('ROLLBACK');
+                return res.status(500).json({ message: 'Error al agregar al carrito: ' + err.message });
+            }
+
+            // Actualizar la cantidad disponible en la tabla productos
+            db.run('UPDATE productos SET cantidad = cantidad - ? WHERE id = ?', [cantidad, producto_id], function(err) {
+                if (err) {
+                    db.run('ROLLBACK');
+                    return res.status(500).json({ message: 'Error al actualizar la cantidad del producto: ' + err.message });
+                }
+
+                // Confirmar la transacción
+                db.run('COMMIT', function(err) {
+                    if (err) {
+                        return res.status(500).json({ message: 'Error al confirmar la transacción: ' + err.message });
+                    }
+                    res.status(200).json({ message: 'Producto agregado al carrito y cantidad actualizada' });
+                });
+            });
+        });
+    });
+});
+
 
 // Iniciar el servidor en el puerto 3000
 app.listen(3000, () => {

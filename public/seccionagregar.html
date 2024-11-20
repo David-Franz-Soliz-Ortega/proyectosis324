@@ -110,23 +110,30 @@ function filtrarProductos(categoria) {
             tarjeta.innerHTML = `
                 
                 <img src="${producto.imagen}" alt="${producto.nombre}">
-                <h4>${producto.nombre}</h4>
-                <p class="precio">Precio Online: ${producto.precio} Bs.</p>
-                <button class="comprar" data-id="${producto.id}">COMPRAR</button>
+                    <h4>${producto.nombre}</h4>
+                    <p class="precio">Precio Online: ${producto.precio} Bs.</p>
+                    <p style="color:black; font-size:13px" class="precio">Tallas Disponibles: ${producto.tallas}.</p>
+                    <p style="color:black; font-size:13px" class="cantidad">Stock: ${producto.cantidad}.</p>
+                    <p>Talla: <input type="text" id="talla-${producto.id}" placeholder="Introduce la talla"></p>
+                    <p>Cantidad: <input type="number" id="cantidad-${producto.id}" min="1" placeholder="Introduce la cantidad"></p>
+                    <button class="comprar" data-id="${producto.id}">COMPRAR</button>
             `;
             contenido.appendChild(tarjeta);
         });
 
         // Agregar evento a los botones "COMPRAR" después de crear las tarjetas
         const botonesComprar = document.querySelectorAll('.comprar');
-        botonesComprar.forEach(boton => {
-            boton.addEventListener('click', () => {
-                const productoId = boton.getAttribute('data-id');
-                agregarAlCarrito(productoId); // Llamar a la función de compra o carrito
-            });
-        });
-    })
-    .catch(error => console.error('Error al filtrar productos:', error));
+                botonesComprar.forEach(boton => {
+                    boton.addEventListener('click', () => {
+                        const productoId = boton.getAttribute('data-id');
+                        const talla = document.getElementById(`talla-${productoId}`).value;
+                        const cantidad = document.getElementById(`cantidad-${productoId}`).value;
+                        agregarAlCarrito(productoId, talla, cantidad);
+                    });
+                });
+            })
+            .catch(error => console.error('Error al cargar productos:', error));
+        
 }
 </script>
     
@@ -135,43 +142,67 @@ function filtrarProductos(categoria) {
 
 
     <script>
-        function buscarProducto() {
-    const query = document.getElementById('busqueda').value.trim();
+function buscarProducto() {
+            const query = document.getElementById('busqueda').value.trim();
 
-    fetch(`/buscar-producto?query=${encodeURIComponent(query)}`)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la red');
+            fetch(`/buscar-producto?query=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la red');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const contenido = document.getElementById('contenido-productos');
+                    contenido.innerHTML = ''; // Limpiar contenido previo
+                    data.forEach(producto => {
+                        const tarjeta = document.createElement('div');
+                        tarjeta.className = 'tarjeta';
+                        tarjeta.innerHTML = `
+                            <img src="${producto.imagen}" alt="${producto.nombre}">
+                            <h4>${producto.nombre}</h4>
+                            <p class="precio">Precio Online: ${producto.precio} Bs.</p>
+                            <p style="color:black; font-size:13px" class="precio">Tallas Disponibles: ${producto.tallas}.</p>
+                            <p style="color:black; font-size:13px" class="cantidad">Stock: ${producto.cantidad}.</p>
+                            <p>Talla: <input type="text" id="talla-${producto.id}" placeholder="Introduce la talla"></p>
+                            <p>Cantidad: <input type="number" id="cantidad-${producto.id}" min="1" placeholder="Introduce la cantidad"></p>
+                            <button class="comprar" data-id="${producto.id}">COMPRAR</button>
+                        `;
+                        contenido.appendChild(tarjeta);
+                    });
+
+// Agregar evento a los botones "COMPRAR"
+const botonesComprar = document.querySelectorAll('.comprar');
+                    botonesComprar.forEach(boton => {
+                        boton.addEventListener('click', () => {
+                            const productoId = boton.getAttribute('data-id');
+                            const talla = document.getElementById(`talla-${productoId}`).value;
+                            const cantidad = document.getElementById(`cantidad-${productoId}`).value;
+                            agregarAlCarrito(productoId, talla, cantidad);
+                        });
+                    });
+                })
+                .catch(error => console.error('Error al buscar productos:', error));
         }
-        return response.json();
-    })
-    .then(data => {
-        const contenido = document.getElementById('contenido-productos');
-        contenido.innerHTML = ''; // Limpiar contenido previo
-        data.forEach(producto => {
-            const tarjeta = document.createElement('div');
-            tarjeta.className = 'tarjeta';
-            tarjeta.innerHTML = `
-                
-                <img src="${producto.imagen}" alt="${producto.nombre}">
-                <h4>${producto.nombre}</h4>
-                <p class="precio">Precio Online: ${producto.precio} Bs.</p>
-                <button class="comprar" data-id="${producto.id}">COMPRAR</button>
-            `;
-            contenido.appendChild(tarjeta);
-        });
 
-        // Agregar evento a los botones "COMPRAR"
-        const botonesComprar = document.querySelectorAll('.comprar');
-        botonesComprar.forEach(boton => {
-            boton.addEventListener('click', () => {
-                const productoId = boton.getAttribute('data-id');
-                agregarAlCarrito(productoId); // Asegúrate de que se llame a la función aquí
-            });
-        });
-    })
-    .catch(error => console.error('Error al buscar productos:', error));
-}
+        // Función para agregar al carrito
+        function agregarAlCarrito(productoId, talla, cantidad) {
+            fetch('/agregar-al-carrito', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ producto_id: productoId, tallas: talla, cantidad: cantidad }) // Enviar producto_id, tallas y cantidad
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Producto agregado al carrito');
+                } else {
+                    alert('Error al agregar al carrito');
+                }
+            })
+            .catch(error => console.error('Error al agregar al carrito:', error));
+        }
     </script>
 
 
@@ -245,57 +276,62 @@ function filtrarProductos(categoria) {
 <script>
     // Función para cargar productos desde la base de datos
     fetch('/productos')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error en la red');
-        }
-        return response.json();
-    })
-    .then(data => {
-        const contenido = document.getElementById('contenido-productos');
-        contenido.innerHTML = ''; // Limpiar contenido previo
-        data.forEach(producto => {
-            const tarjeta = document.createElement('div');
-            tarjeta.className = 'tarjeta';
-            tarjeta.innerHTML = `
-                
-                <img src="${producto.imagen}" alt="${producto.nombre}">
-                <h4>${producto.nombre}</h4>
-                <p class="precio">Precio Online: ${producto.precio} Bs.</p>
-                <button class="comprar" data-id="${producto.id}">COMPRAR</button>
-            `;
-            contenido.appendChild(tarjeta);
-        });
-
-        // Agregar evento a los botones "COMPRAR"
-        const botonesComprar = document.querySelectorAll('.comprar');
-        botonesComprar.forEach(boton => {
-            boton.addEventListener('click', () => {
-                const productoId = boton.getAttribute('data-id');
-                agregarAlCarrito(productoId);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la red');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const contenido = document.getElementById('contenido-productos');
+            contenido.innerHTML = ''; // Limpiar contenido previo
+            data.forEach(producto => {
+                const tarjeta = document.createElement('div');
+                tarjeta.className = 'tarjeta';
+                tarjeta.innerHTML = `
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <h4>${producto.nombre}</h4>
+                    <p class="precio">Precio Online: ${producto.precio} Bs.</p>
+                    <p style="color:black; font-size:13px" class="precio">Tallas Disponibles: ${producto.tallas}.</p>
+                    <p style="color:black; font-size:13px" class="cantidad">Stock: ${producto.cantidad}.</p>
+                    <p>Talla: <input type="text" id="talla-${producto.id}" placeholder="Introduce la talla"></p>
+                    <p>Cantidad: <input type="number" id="cantidad-${producto.id}" min="1" placeholder="Introduce la cantidad"></p>
+                    <button class="comprar" data-id="${producto.id}">COMPRAR</button>
+                `;
+                contenido.appendChild(tarjeta);
             });
-        });
-    })
-    .catch(error => console.error('Error al cargar productos:', error));
 
-// Función para agregar al carrito
-function agregarAlCarrito(productoId) {
-    fetch('/agregar-al-carrito', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ producto_id: productoId, cantidad: 1 }) // Puedes ajustar la cantidad según sea necesario
-    })
-    .then(response => {
-        if (response.ok) {
-            alert('Producto agregado al carrito');
-        } else {
-            alert('Error al agregar al carrito');
+            // Agregar evento a los botones "COMPRAR"
+            const botonesComprar = document.querySelectorAll('.comprar');
+                botonesComprar.forEach(boton => {
+                    boton.addEventListener('click', () => {
+                        const productoId = boton.getAttribute('data-id');
+                        const talla = document.getElementById(`talla-${productoId}`).value;
+                        const cantidad = document.getElementById(`cantidad-${productoId}`).value;
+                        agregarAlCarrito(productoId, talla, cantidad);
+                    });
+                });
+            })
+            .catch(error => console.error('Error al cargar productos:', error));
+        
+        // Función para agregar al carrito
+        function agregarAlCarrito(productoId, talla, cantidad) {
+            fetch('/agregar-al-carrito', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ producto_id: productoId, tallas: talla, cantidad: cantidad }) // Enviar producto_id, tallas y cantidad
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Producto agregado al carrito');
+                } else {
+                    alert('Error al agregar al carrito');
+                }
+            })
+            .catch(error => console.error('Error al agregar al carrito:', error));
         }
-    })
-    .catch(error => console.error('Error al agregar al carrito:', error));
-}
 </script>
 
     <footer style="background-color: black; color: white; padding: 20px; display: flex; flex-wrap: wrap; justify-content: space-between;">
