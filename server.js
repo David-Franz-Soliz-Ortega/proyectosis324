@@ -8,6 +8,11 @@ const app = express();
 
 app.use(bodyParser.json());
 
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
+
+
 // Código para generar el hash
 const password = '123456'; // La contraseña que deseas probar
 const saltRounds = 10; // Asegúrate de usar el mismo número de rounds

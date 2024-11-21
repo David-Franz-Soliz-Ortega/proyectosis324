@@ -1,10 +1,19 @@
 {
+  "name": "mi-aplicacion",
+  "version": "1.0.0",
+  "description": "Mi aplicación desplegada en Render",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "npm rebuild sqlite3",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "express": "^4.19.2",
+    "mi-aplicacion": "file:",
     "multer": "^1.4.5-lts.1",
-    "node.js": "^0.0.1-security",
     "sqlite3": "^5.1.7"
   }
 }
