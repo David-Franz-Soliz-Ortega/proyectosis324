@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/estilos2.css" rel="stylesheet">
+    <link href="scss/_variables.scss" rel="stylesheet">
     <title>Document</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <style>
@@ -15,6 +16,15 @@
         a{
             color: white;
         }
+        .seccionproductos{
+    margin-top: -12px;
+    adding-right: -30px;
+}
+
+.buscador{
+    margin-top: 10px;
+    adding-right: 10px;
+}
     </style>
 </head>
 <body>
@@ -23,9 +33,9 @@
         <div><a href="http://">Marca  </a></div>
         <div><a href="http://">Hombres</a></div>
         <div><a href="http://">Mujeres</a></div>
-        <input type="text" id="busqueda" placeholder="Buscar producto por nombre o precio">
+        <input class="buscador" type="text" id="busqueda" placeholder="Buscar producto por nombre o precio">
             <button onclick="buscarProducto()">
-                <img src="/img/lupa.png" alt="Buscar" style="width: 20px; height: 20px;">
+                <img src="/img/lupa.png" alt="Buscar" style="width: 15px; height: 15px;">
             </button>
             <a href="seccioncarrito.html">
                 <img src="/img/carritodorado.jfif" alt="Carrito" style="width: 60px; height: 48px;">
