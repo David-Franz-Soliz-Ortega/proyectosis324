@@ -368,6 +368,28 @@ app.post('/agregar-al-carrito', (req, res) => {
     });
 });
 
+//Funcion para generar el pdf
+function generarPDF() {
+    const ci = document.getElementById('ci').value;
+    const usuario = document.getElementById('usuario').value;
+    const email = document.getElementById('email').value;
+    const direccion = document.getElementById('direccion').value;
+    const telefono = document.getElementById('telefono').value;
+    const total = document.getElementById('total-precio').innerText;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text(`CI: ${ci}`, 10, 10);
+    doc.text(`Usuario: ${usuario}`, 10, 20);
+    doc.text(`Email: ${email}`, 10, 30);
+    doc.text(`Dirección de Entrega: ${direccion}`, 10, 40);
+    doc.text(`Número de WhatsApp: ${telefono}`, 10, 50);
+    doc.text(`Total: ${total}`, 10, 60);
+
+    doc.save('factura.pdf');
+
+    // Aquí puedes agregar la lógica para enviar el PDF a un número de WhatsApp
+}
 
 // Iniciar el servidor en el puerto 3000
 app.listen(3000, () => {

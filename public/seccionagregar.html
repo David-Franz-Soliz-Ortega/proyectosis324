@@ -14,7 +14,10 @@
     <link href="scss/_variables.scss" rel="stylesheet">
     <div class="titulo"><a href="seccionagregar.html" class="titulo-enlace">Zapatillas Urbanas</a></div>
     <style>
-        
+        body{
+            background-color:white
+        }
+
         #categoriasContainer {
             position: relative; 
             left: 0; 
@@ -58,27 +61,41 @@
     margin-top: -12px;
     adding-right: -30px;
 }
+
+.seccionproductos{
+    margin-top: -12px;
+    adding-right: -30px;
+}
+a{
+    color: white;
+    text-decoration: none;
+}
+.buscador{
+    margin-top: -12px;
+    adding-right: -30px;
+}
     </style>
 </head>
 <body>
     <div class="encabezado" style="height: 50px; display: flex; flex-direction: row;">
-        <div class="titulo"><a href="seccionagregar.html" class="titulo-enlace">Zapatillas Urbanas</a></div>
-        <button id="mostrarCategorias">Mostrar Categorías</button>
+        <div class="titulo"><a href="seccionagregar.html">Zapatillas Urbanas</a></div>
+        <button id="mostrarCategorias" style="background-color: black; color: inherit; border: none; ">Mostrar Categorías</button>
         <div id="categoriasContainer" style="display: none;">
         <ul id="listaCategorias">
         <li><span class="categoria" onclick="filtrarProductos('hombre')">Zapatillas de Hombre</span></li>
         <li><span class="categoria" onclick="filtrarProductos('mujer')">Zapatillas de Mujer</span></li>
         <li><span class="categoria" onclick="filtrarProductos('unisex')">Zapatillas Unisex</span></li>
     </ul>
+
+
+    
 </div>
-
-
         <!-- <div><a href="#">Marca</a></div> -->
-        <div><a href="seccionprodcutos.html">Agregar Producto</a></div> 
+        <div class="seccionproductos" ><a href="seccionprodcutos.html" style="color: white; text-decoration: none;">Agregar Producto</a></div> 
         <!-- <div><a href="#">Hombres</a></div>
         <div><a href="#">Mujeres</a></div> -->
         <div class="buscador">
-            <input type="text" id="busqueda" placeholder="Buscar producto por nombre o precio">
+            <input type="text" id="busqueda" placeholder="Buscar producto">
             <button onclick="buscarProducto()">
                 <img src="/img/lupa.png" alt="Buscar" style="width: 20px; height: 20px;">
             </button>
@@ -87,7 +104,9 @@
         <div class="contenido" id="contenido-productos">
         Los productos se cargarán aquí -->
         <!-- </div> -->
-        <h3><a href="seccioncarrito.html">Carrito</a></h3>
+        <a href="seccioncarrito.html">
+            <img src="/img/carritodorado.jfif" alt="Carrito" style="width: 60px; height: 48px;">
+        </a>
     </div>
 
 

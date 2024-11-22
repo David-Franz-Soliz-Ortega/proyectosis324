@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/estilos2.css" rel="stylesheet">
     <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <style>
         .contenido-carrito {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-evenly;
+        }
+        a{
+            color: white;
         }
     </style>
 </head>
@@ -23,11 +27,31 @@
             <button onclick="buscarProducto()">
                 <img src="/img/lupa.png" alt="Buscar" style="width: 20px; height: 20px;">
             </button>
-        <h3><a href="seccioncarrito.html">Carrito</a></h3>
+            <a href="seccioncarrito.html">
+                <img src="/img/carritodorado.jfif" alt="Carrito" style="width: 60px; height: 48px;">
+            </a>
     </div>
     <h1>Lista de productos</h1>
     <div class="contenido-carrito" id="contenido-carrito"></div>
     <h2 id="total-precio">Total: 0 Bs.</h2>
+
+
+    <h2>Datos del Usuario</h2>
+    <form id="form-datos-usuario">
+        <label for="ci">CI:</label>
+        <input type="text" id="ci" name="ci" required><br>
+        <label for="usuario">Usuario:</label>
+        <input type="text" id="usuario" name="usuario" required><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+        <label for="direccion">Dirección de Entrega:</label>
+        <input type="text" id="direccion" name="direccion" required><br>
+        <label for="telefono">Número de WhatsApp:</label>
+        <input type="text" id="telefono" name="telefono" required><br>
+        <button type="button" onclick="generarPDF()">Pagar</button>
+    </form>
+    
+
 
     <script>
         // Función para cargar productos del carrito
@@ -94,6 +118,56 @@
             })
             .catch(error => console.error('Error al eliminar del carrito:', error));
         }
+
+        // Función para generar el PDF
+        function generarPDF() {
+            const ci = document.getElementById('ci').value;
+            const usuario = document.getElementById('usuario').value;
+            const email = document.getElementById('email').value;
+            const direccion = document.getElementById('direccion').value;
+            const telefono = document.getElementById('telefono').value;
+            const total = document.getElementById('total-precio').innerText;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Título y NIT
+            doc.setFontSize(18);
+            const title = 'TENIS URBANOS';
+            const titleWidth = doc.getTextWidth(title);
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const titleX = (pageWidth - titleWidth) / 2;
+            doc.text(title, titleX, 10);
+
+            doc.setFontSize(12);
+            doc.text('NIT: 123456789', 10, 20);
+
+            // Número de factura único
+            const numeroFactura = `Factura No: ${Date.now()}`;
+            doc.text(numeroFactura, 10, 30);
+
+            // Datos del usuario y total
+            doc.text(`CI: ${ci}`, 10, 40);
+            doc.text(`Usuario: ${usuario}`, 10, 50);
+            doc.text(`Email: ${email}`, 10, 60);
+            doc.text(`Dirección de Entrega: ${direccion}`, 10, 70);
+            doc.text(`Número de WhatsApp: ${telefono}`, 10, 80);
+            doc.text(`Total: ${total}`, 10, 90);
+
+            doc.save('factura.pdf');
+
+            // Aquí puedes agregar la lógica para enviar el PDF a un número de WhatsApp
+            
+            // Crear el mensaje de WhatsApp
+            const mensaje = `Factura No: ${Date.now()}\nCI: ${ci}\nUsuario: ${usuario}\nEmail: ${email}\nDirección de Entrega: ${direccion}\nNúmero de WhatsApp: ${telefono}\nTotal: ${total}`;
+            const url = `https://wa.me/59171328312?text=${encodeURIComponent(mensaje)}`;
+
+            // Redirigir al enlace de WhatsApp
+            window.open(url, '_blank');
+        }
+
+
+
     </script>
 
 <footer style="background-color: black; color: white; padding: 20px; display: flex; flex-wrap: wrap; justify-content: space-between;">

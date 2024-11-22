@@ -5,30 +5,122 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
     <link href="css/estilos.css" rel="stylesheet">
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('/img/BANNER_550_HOMBRE_1_.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fondo opaco */
+            z-index: -1;
+        }
+
+        .cuadro {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    width: 350px;
+}
+
+.cuadro h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left; /* Alinear el texto a la izquierda */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+a {
+    display: block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+    </style>
 </head>
 <body>
-    <div class="titulo"><a href="seccionagregar.html" class="titulo-enlace">Zapatillas Urbanas</a></div>
+    <div class="overlay"></div>
     <div class="cuadro">
         <h1>Registro de Usuario</h1>
         <form id="registroForm">
-            <label for="ci">CI:</label>
-            <input type="number" id="ci" required>
-            <br>
-            <label for="usuario">Usuario:</label>
-            <input type="text" id="usuario" required>
-            <br>
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" required>
-            <br>
-            <label for="email">Email:</label>
-            <input type="email" id="email">
-            <br>
-            <label for="rol">Rol:</label>
-            <input type="text" id="rol">
-            <br>
-            <button type="submit">Registrar</button>
+            <div class="form-group">
+                <label for="ci">CI:</label>
+                <input type="number" class="form-control" id="ci" required>
+            </div>
+            <div class="form-group">
+                <label for="usuario">Usuario:</label>
+                <input type="text" class="form-control" id="usuario" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email">
+            </div>
+            <div class="form-group">
+                <label for="rol">Rol:</label>
+                <input type="text" class="form-control" id="rol">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Registrar</button>
         </form>
-    </div>      
+    </div>    
 
     <div class="pie"></div>
     

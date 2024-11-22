@@ -1,7 +1,4 @@
-body{
-    
-    background-color: gray;
-}
+
 
 .cuadro{
     border:2px solid black;
@@ -22,7 +19,7 @@ body{
     text-align: center;
 }
 
-.encabezado{
+.encabezado .titulo{
     border:2px solid black;
     background-color: black;
     color:white;
@@ -31,7 +28,7 @@ body{
     text-align: center;
 }
 
-.encabezado .titulo{
+.encabezado{
     font-size: 25px;
     color: white; /* Color blanco */
     font-weight: bold; /* Negritas */
