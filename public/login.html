@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión</title>
     <link href="css/estilos.css" rel="stylesheet">
-    
+
     <style>
         body {
             display: flex;
@@ -17,15 +18,18 @@
             background-size: cover;
             position: relative;
         }
+
         .overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Fondo opaco */
+            background: rgba(0, 0, 0, 0.5);
+            /* Fondo opaco */
             z-index: -1;
         }
+
         .cuadro {
             background-color: white;
             padding: 20px;
@@ -33,9 +37,11 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         .form-control {
             width: 90%;
             padding: 10px;
@@ -43,6 +49,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
         }
+
         .btn {
             width: 100%;
             padding: 10px;
@@ -52,20 +59,24 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         .btn:hover {
             background-color: #0056b3;
         }
+
         a {
             display: block;
             margin-top: 10px;
             color: #007bff;
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
     <div class="overlay"></div>
     <div class="cuadro">
@@ -82,41 +93,41 @@
             <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button> <br>
             <a href="registrarse.html">Registrarse</a>
         </form>
-    </div>      
+    </div>
 
     <div class="pie"></div>
-    
+
     <script>
         // Manejador de eventos para el envío del formulario
         document.getElementById("loginForm").addEventListener("submit", function (event) {
-    event.preventDefault(); // Evitar el envío del formulario por defecto
+            event.preventDefault(); // Evitar el envío del formulario por defecto
 
-    // Obtener los valores de usuario y contraseña
-    let usuario = document.getElementById("usuario").value;
-    let password = document.getElementById("password").value;
+            // Obtener los valores de usuario y contraseña
+            let usuario = document.getElementById("usuario").value;
+            let password = document.getElementById("password").value;
 
-    // Enviar datos al servidor para realizar el login
-    fetch('/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ usuario: usuario, password: password }) // Asegúrate de que 'usuario' y 'password' sean correctos
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message === 'Acceso permitido') {
-            alert('Acceso permitido');
-            window.location.href = "seccionagregar.html"; // Redirige al usuario
-        } else {
-            alert(data.message); // Muestra el mensaje de error
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error en la solicitud');
-    });
-});
+            // Enviar datos al servidor para realizar el login
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ usuario: usuario, password: password }) // Asegúrate de que 'usuario' y 'password' sean correctos
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Acceso permitido') {
+                        alert('Acceso permitido');
+                        window.location.href = "seccionagregar.html"; // Redirige al usuario
+                    } else {
+                        alert(data.message); // Muestra el mensaje de error
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error en la solicitud');
+                });
+        });
     </script>
 </body>
 

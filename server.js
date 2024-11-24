@@ -9,6 +9,8 @@ const app = express();
 app.use(bodyParser.json());
 
 const port = process.env.PORT || 3000;
+// Configurar la base de datos
+// const db = new sqlite3.Database('./proyecto_final324.db');
 
 app.use(express.json());
 
@@ -128,6 +130,21 @@ app.post('/login', (req, res) => {
 
         // Si la contraseña es válida, permite el acceso
         res.status(200).json({ message: 'Acceso permitido', usuario: user });
+    });
+});
+
+// Ruta para obtener el rol del usuario autenticado
+app.get('/api/usuario', (req, res) => {
+    const ci = req.query.ci; // Suponiendo que el CI del usuario se pasa como parámetro de consulta
+
+    db.get('SELECT rol FROM usuario WHERE ci = ?', [ci], (err, row) => {
+        if (err) {
+            res.status(500).json({ error: 'Error al obtener el rol del usuario' });
+        } else if (row) {
+            res.json({ rol: row.rol });
+        } else {
+            res.status(404).json({ error: 'Usuario no encontrado' });
+        }
     });
 });
 
